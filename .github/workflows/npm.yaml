@@ -1,7 +1,6 @@
 name: Release to npm
 
 on:
-  workflow_dispatch:
   release:
     types: [ published ]
 
@@ -13,9 +12,5 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '20.6.0'
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github.event.release) }}
-        run: echo "$GITHUB_CONTEXT"
-      # - run: npm version 0.0.0-${{github.event.pull_request.head.ref}} --no-git-tag-version
-      # - run: echo "$(cat package.json)"
+      - run: npm version ${{github.event.release.tag_name}} --no-git-tag-version
+      - run: echo "$(cat package.json)"
