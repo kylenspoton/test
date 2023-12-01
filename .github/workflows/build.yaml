@@ -2,6 +2,11 @@ name: Build
 
 on:
   workflow_call:
+    inputs:
+      deploy:
+        description: "Deploy the app"
+        required: false
+        type: boolean
 
 jobs:
   build:
@@ -9,3 +14,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: echo "Building..."
+      - run: echo "Deploying..."
+        if: ${{ inputs.deploy }}
