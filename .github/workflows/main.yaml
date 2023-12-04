@@ -5,6 +5,8 @@ on:
     types: [opened, synchronize, labeled]
   push:
     branches: [main]
+  release:
+    types: [published]
 
 jobs:
   test:
@@ -23,4 +25,11 @@ jobs:
     needs: [test]
     uses: ./.github/workflows/build.yaml
     with:
-      deploy: ${{ contains(github.event.*.labels.*.name, 'deploy') || github.event_name == 'push' }}
+      deploy: ${{ contains(github.event.*.labels.*.name, 'deploy') }}
+
+  build2:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Building..."
