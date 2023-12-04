@@ -12,14 +12,14 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      app_url: ${{ steps.prepare.outputs.app_url}}
+      app_url: ${{ steps.prepare.outputs.app_url }}
     steps:
       - uses: actions/checkout@v4
       - run: echo "Preparing..."
       - shell: bash
         id: prepare
         run: |
-          if [ ${{ github.event_name == 'push' }} ]; then
+          if [ ${{ github.event_name }} == 'release' ]; then
             echo "app_url=nexus-docs-cms.ue1.staging.spoton.sh" >> "$GITHUB_OUTPUT"
           else
             echo "app_url=pr-${{ github.event.number }}-nexus-docs-cms.ue1.dev.spoton.sh" >> "$GITHUB_OUTPUT"

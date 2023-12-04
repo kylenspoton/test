@@ -2,11 +2,15 @@ name: Main
 
 on:
   pull_request:
+    types: [synchronize, labeled]
   push:
     branches: [main]
+  release:
+    types: [published]
 
 jobs:
-  test:
+  deploy:
+    if: ${{ contains(github.event.*.labels.*.name, 'deploy') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
