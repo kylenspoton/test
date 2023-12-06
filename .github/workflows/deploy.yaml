@@ -3,10 +3,12 @@ name: Deploy
 on:
   pull_request:
     types: [synchronize, labeled]
-  push:
-    branches: [main]
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Which environment to deploy to: dev, corp, staging, prod"
+        type: string
+        required: true
 
 jobs:
   prepare:
@@ -29,10 +31,17 @@ jobs:
   deploy:
     needs: [prepare]
     if: ${{ needs.prepare.outputs.deploy == 'true' }}
+    environment:
+      name: staging
+      url: https://site.staging
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
           node-version: "20.6.0"
-      - run: echo "Deploying..."
+      - run: |
+          echo "
+            var1=${{ inputs.environment }}
+            var2=${{ secrets.POSTGRES_PASSWORD }}
+          " > .env
