@@ -1,0 +1,38 @@
+name: Deploy
+
+on:
+  pull_request:
+    types: [synchronize, labeled]
+  push:
+    branches: [main]
+  release:
+    types: [published]
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      deploy: ${{ steps.prepare.outputs.deploy }}
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        id: prepare
+        run: |
+          if [ ${{ github.event_name }} == 'release' ]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          elif [ ${{ github.event_name }} == 'push' ]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=${{ contains(github.event.*.labels.*.name, 'deploy') }}" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy:
+    needs: [prepare]
+    if: ${{ needs.prepare.outputs.deploy == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "20.6.0"
+      - run: echo "Deploying..."
