@@ -6,9 +6,12 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Which environment to deploy to: dev, corp, staging, prod"
-        type: string
+        description: "Which environment to deploy to?"
+        type: choice
         required: true
+        options:
+          - staging
+          - prod
 
 jobs:
   prepare:
@@ -17,6 +20,10 @@ jobs:
       deploy: ${{ steps.prepare.outputs.deploy }}
     steps:
       - uses: actions/checkout@v4
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
       - shell: bash
         id: prepare
         run: |
