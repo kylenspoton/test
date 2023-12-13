@@ -28,23 +28,27 @@ jobs:
         with:
           node-version: "20.6.0"
       - run: npm i
-      - name: Version or Publish Packages
-        if: ${{ github.event_name == 'push' }}
-        id: changesets
-        uses: changesets/action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          title: 'release: version packages'
-          commit: 'release: version packages'
+      # - name: Version or Publish Packages
+      #   if: ${{ github.event_name == 'push' }}
+      #   id: changesets
+      #   uses: changesets/action@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     title: 'release: version packages'
+      #     commit: 'release: version packages'
       - name: Trigger PR Build
-        if: ${{ github.event_name == 'push' }}
+        # if: ${{ github.event_name == 'push' }}
         uses: actions/github-script@v7
         with:
           script: |
-            github.rest.actions.createWorkflowDispatch({
+            github.rest.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              workflow_id: 'main.yaml',
-              ref: 'changeset-release/main',
+              name: 'test',
+              head_sha: 'c863dd763fa3e1da93faf40283839c506a2ac17d',
+              output: {
+                title: 'test',
+                summary: 'test asdf',
+              },
             })
