@@ -2,8 +2,17 @@ name: Main
 
 on:
   pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
   push:
     branches: [main]
+
+permissions:
+  contents: write
+  pages: write
 
 jobs:
   test:
@@ -18,18 +27,24 @@ jobs:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: echo "$GITHUB_CONTEXT"
 
-  publish:
+  deploy:
     needs: [test]
-    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ github.event_name == 'pull_request' && steps.preview.outputs.deployment-url || '' }}
     steps:
-      - name: Trigger PR Build
-        uses: actions/github-script@v7
+      - uses: actions/checkout@v4
+      - name: Deploy preview
+        id: preview
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: rossjrw/pr-preview-action@v1
         with:
-          script: |
-            github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'npm-publishing.yaml',
-              ref: 'main',
-            })
+          source-dir: ./dist/
+      - name: Deploy main
+        if: ${{ github.event_name == 'push' }}
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          clean-exclude: pr-preview/
+          force: false
+          folder: ./dist/
