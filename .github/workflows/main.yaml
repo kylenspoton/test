@@ -37,7 +37,6 @@ jobs:
         uses: rossjrw/pr-preview-action@v1
         with:
           source-dir: ./dist/
-          action: deploy
       - name: Deploy main
         if: ${{ github.event_name == 'push' }}
         uses: JamesIves/github-pages-deploy-action@v4
