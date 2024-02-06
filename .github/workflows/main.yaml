@@ -39,7 +39,7 @@ jobs:
       - name: Version or Publish Packages
         if: ${{ github.event_name == 'push' }}
         id: changesets
-        uses: changesets/action@v1
+        uses: kylenspoton/changesetAction@v1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
