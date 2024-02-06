@@ -30,6 +30,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.CHANGESET_GITHUB_TOKEN }}
       - uses: actions/setup-node@v3
         with:
           node-version: '21.0.0'
