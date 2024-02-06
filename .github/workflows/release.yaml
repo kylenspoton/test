@@ -3,6 +3,8 @@ name: Release
 on:
   pull_request:
     types: [ready_for_review]
+    paths:
+      - '**/CHANGELOG.md'
 
 jobs:
   test:

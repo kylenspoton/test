@@ -24,7 +24,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '21.0.0'
-      - run: npm install
+      - run: asdf
 
   build-packages:
     needs: [test]
